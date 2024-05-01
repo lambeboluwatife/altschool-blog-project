@@ -26,16 +26,24 @@ exports.addBlog = async (req, res, next) => {
       const readingTime = Math.ceil(wordCount / wordsPerMinute);
       return readingTime;
     }
-    const readingTime = calculateReadingTime(body);
+
+    function readingTimeMinutes(time) {
+      if (calculateReadingTime(time) === 1) {
+        return `${calculateReadingTime(time)} min`;
+      } else {
+        return `${calculateReadingTime(time)} mins`;
+      }
+    }
+
     const newBlog = new Blog({
       title,
       description,
       body,
       author,
       tags,
-      state: "not published",
+      state: "draft",
       read_count: 0,
-      reading_time: readingTime,
+      reading_time: readingTimeMinutes(body),
       timestamp,
     });
     const blog = await newBlog.save();
@@ -56,6 +64,39 @@ exports.addBlog = async (req, res, next) => {
         error: err.message,
       });
     }
+  }
+};
+
+exports.updateBlog = async (req, res, next) => {
+  try {
+    const updateFields = req.body;
+
+    let blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        error: "No blog found",
+      });
+    }
+
+    Object.keys(updateFields).forEach((key) => {
+      if (updateFields[key] !== undefined) {
+        blog[key] = updateFields[key];
+      }
+    });
+
+    blog = await blog.save();
+
+    return res.status(200).json({
+      success: true,
+      data: blog,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: "Server Error",
+    });
   }
 };
 
