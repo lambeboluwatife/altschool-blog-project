@@ -5,10 +5,10 @@ const {
   getBlogs,
   addBlog,
   deleteBlog,
-  updateBlogs,
+  updateBlog,
 } = require("../controllers/blogs");
 
 router.route("/").get(getBlogs).post(addBlog);
-router.route("/:id").delete(deleteBlog);
+router.route("/:id").delete(deleteBlog).put(updateBlog);
 
 module.exports = router;
