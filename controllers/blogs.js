@@ -58,3 +58,28 @@ exports.addBlog = async (req, res, next) => {
     }
   }
 };
+
+exports.deleteBlog = async (req, res, next) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        error: "No blog found",
+      });
+    }
+
+    await blog.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      data: {},
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: "Server Error",
+    });
+  }
+};
