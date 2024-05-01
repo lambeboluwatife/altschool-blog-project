@@ -19,26 +19,26 @@ exports.getBlogs = async (req, res, next) => {
 
 exports.addBlog = async (req, res, next) => {
   try {
-    const { title, description, body, author, tags } = req.body;
-    // function calculateReadingTime(text) {
-    //   const wordsPerMinute = 200;
-    //   const wordCount = text.split(/\s+/).length;
-    //   const readingTime = Math.ceil(wordCount / wordsPerMinute);
-    //   return readingTime;
-    // }
-    // const readingTime = calculateReadingTime(req.body.body);
-    // const newBlog = {
-    //   title,
-    //   description,
-    //   body,
-    //   author,
-    //   tags,
-    //   state: "not published",
-    //   read_count: 0,
-    //   reading_time: readingTime,
-    //   timestamp,
-    // };
-    const blog = await Blog.create(req.body);
+    const { title, description, body, author, tags, timestamp } = req.body;
+    function calculateReadingTime(text) {
+      const wordsPerMinute = 200;
+      const wordCount = text.split(/\s+/).length;
+      const readingTime = Math.ceil(wordCount / wordsPerMinute);
+      return readingTime;
+    }
+    const readingTime = calculateReadingTime(body);
+    const newBlog = new Blog({
+      title,
+      description,
+      body,
+      author,
+      tags,
+      state: "not published",
+      read_count: 0,
+      reading_time: readingTime,
+      timestamp,
+    });
+    const blog = await newBlog.save();
     return res.status(201).json({
       success: true,
       data: blog,
@@ -53,7 +53,7 @@ exports.addBlog = async (req, res, next) => {
     } else {
       return res.status(500).json({
         success: false,
-        error: "Server Error",
+        error: err.message,
       });
     }
   }

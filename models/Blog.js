@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const itemSchema = new mongoose.Schema({
+const blogSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Please add a blog title"],
@@ -21,24 +21,24 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please add tag(s)"],
   },
-  // state: {
-  //   type: String,
-  //   required: true,
-  // },
-  // read_count: {
-  //   type: Number,
-  //   required: true,
-  // },
-  // reading_time: {
-  //   type: String,
-  //   required: true,
-  // },
-  // timestamp: {
-  //   type: Date,
-  //   default: Date.now,
-  // },
+  state: {
+    type: String,
+    required: true,
+  },
+  read_count: {
+    type: Number,
+    required: true,
+  },
+  reading_time: {
+    type: String,
+    required: true,
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const Item = mongoose.model("Item", itemSchema);
+const Blog = mongoose.model("Blog", blogSchema);
 
-module.exports = Item;
+module.exports = Blog;
