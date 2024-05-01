@@ -4,13 +4,11 @@ const router = express.Router();
 const {
   getBlogs,
   addBlog,
-  deleteBlogs,
+  deleteBlog,
   updateBlogs,
 } = require("../controllers/blogs");
 
 router.route("/").get(getBlogs).post(addBlog);
-router.route("/:id");
-// .delete(deleteBlogs)
-// .update(updateBlogs);
+router.route("/:id").delete(deleteBlog);
 
 module.exports = router;
