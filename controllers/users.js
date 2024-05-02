@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 exports.registerUser = async (req, res, next) => {
   try {
@@ -74,15 +75,7 @@ exports.loginUser = async (req, res, next) => {
         message: info.message,
       });
     }
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-      return res.status(200).json({
-        success: true,
-        message: "Login successful",
-        user: user,
-      });
-    });
+    req.user = user;
+    next();
   })(req, res, next);
 };

@@ -1,4 +1,5 @@
 const Blog = require("../models/Blog");
+const jwt = require("jsonwebtoken");
 
 exports.getBlogs = async (req, res, next) => {
   try {
@@ -18,53 +19,63 @@ exports.getBlogs = async (req, res, next) => {
 };
 
 exports.addBlog = async (req, res, next) => {
-  try {
-    const { title, description, body, author, tags, timestamp } = req.body;
-    function calculateReadingTime(text) {
-      const wordsPerMinute = 200;
-      const wordCount = text.split(/\s+/).length;
-      const readingTime = Math.ceil(wordCount / wordsPerMinute);
-      return readingTime;
-    }
-
-    function readingTimeMinutes(time) {
-      if (calculateReadingTime(time) === 1) {
-        return `${calculateReadingTime(time)} min`;
-      } else {
-        return `${calculateReadingTime(time)} mins`;
-      }
-    }
-
-    const newBlog = new Blog({
-      title,
-      description,
-      body,
-      author,
-      tags,
-      state: false,
-      read_count: 0,
-      reading_time: readingTimeMinutes(body),
-      timestamp,
-    });
-    const blog = await newBlog.save();
-    return res.status(201).json({
-      success: true,
-      data: blog,
-    });
-  } catch (err) {
-    if (err.name === "ValidationError") {
-      const messages = Object.values(err.errors).map((val) => val.message);
-      return res.status(400).json({
+  jwt.verify(req.token, "secretkey", async (err, authData) => {
+    if (err) {
+      return res.status(403).json({
         success: false,
-        error: messages,
+        error: "Forbidden",
       });
     } else {
-      return res.status(500).json({
-        success: false,
-        error: err.message,
-      });
+      try {
+        const { title, description, body, author, tags, timestamp } = req.body;
+        function calculateReadingTime(text) {
+          const wordsPerMinute = 200;
+          const wordCount = text.split(/\s+/).length;
+          const readingTime = Math.ceil(wordCount / wordsPerMinute);
+          return readingTime;
+        }
+
+        function readingTimeMinutes(time) {
+          if (calculateReadingTime(time) === 1) {
+            return `${calculateReadingTime(time)} min`;
+          } else {
+            return `${calculateReadingTime(time)} mins`;
+          }
+        }
+
+        const newBlog = new Blog({
+          title,
+          description,
+          body,
+          author,
+          tags,
+          state: false,
+          read_count: 0,
+          reading_time: readingTimeMinutes(body),
+          timestamp,
+        });
+        const blog = await newBlog.save();
+        return res.status(201).json({
+          success: true,
+          data: blog,
+          authData,
+        });
+      } catch (err) {
+        if (err.name === "ValidationError") {
+          const messages = Object.values(err.errors).map((val) => val.message);
+          return res.status(400).json({
+            success: false,
+            error: messages,
+          });
+        } else {
+          return res.status(500).json({
+            success: false,
+            error: err.message,
+          });
+        }
+      }
     }
-  }
+  });
 };
 
 exports.updateBlog = async (req, res, next) => {

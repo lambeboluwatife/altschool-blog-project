@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const { verifyToken } = require("../middlewares/jwt");
+
 const {
   getBlogs,
   addBlog,
@@ -9,7 +11,7 @@ const {
   changeBlogState,
 } = require("../controllers/blogs");
 
-router.route("/").get(getBlogs).post(addBlog);
+router.route("/").get(getBlogs).post(verifyToken, addBlog);
 router.route("/:id").delete(deleteBlog).put(updateBlog);
 router.route("/:id/state").put(changeBlogState);
 
