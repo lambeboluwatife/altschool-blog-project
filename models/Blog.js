@@ -22,7 +22,7 @@ const blogSchema = new mongoose.Schema({
     required: [true, "Please add tag(s)"],
   },
   state: {
-    type: String,
+    type: Boolean,
     required: true,
   },
   read_count: {
