@@ -41,7 +41,7 @@ exports.addBlog = async (req, res, next) => {
       body,
       author,
       tags,
-      state: "draft",
+      state: false,
       read_count: 0,
       reading_time: readingTimeMinutes(body),
       timestamp,
@@ -85,6 +85,33 @@ exports.updateBlog = async (req, res, next) => {
         blog[key] = updateFields[key];
       }
     });
+
+    blog = await blog.save();
+
+    return res.status(200).json({
+      success: true,
+      data: blog,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: "Server Error",
+    });
+  }
+};
+
+exports.changeBlogState = async (req, res, next) => {
+  try {
+    let blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        error: "No blog found",
+      });
+    }
+
+    blog.state = !blog.state;
 
     blog = await blog.save();
 
