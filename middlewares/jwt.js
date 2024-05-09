@@ -23,15 +23,37 @@ exports.generateToken = async (req, res) => {
 
 exports.verifyToken = (req, res, next) => {
   const bearerHeader = req.headers["authorization"];
-  if (typeof bearerHeader !== "undefined") {
+  if (bearerHeader) {
     const bearer = bearerHeader.split(" ");
-    const bearerToken = bearer[1];
-    req.token = bearerToken;
-    next();
+    if (bearer.length === 2) {
+      const bearerToken = bearer[1];
+      req.token = bearerToken;
+      next();
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Malformed token",
+      });
+    }
   } else {
-    return res.status(403).json({
+    return res.status(401).json({
       success: false,
-      message: "Forbidden",
+      message: "Unauthorized: Missing Authorization header",
     });
   }
 };
+
+// exports.verifyToken = (req, res, next) => {
+//   const bearerHeader = req.headers["authorization"];
+//   if (typeof bearerHeader !== "undefined") {
+//     const bearer = bearerHeader.split(" ");
+//     const bearerToken = bearer[1];
+//     req.token = bearerToken;
+//     next();
+//   } else {
+//     return res.status(403).json({
+//       success: false,
+//       message: "Forbidden",
+//     });
+//   }
+// };

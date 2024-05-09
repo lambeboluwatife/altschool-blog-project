@@ -27,7 +27,7 @@ exports.addBlog = async (req, res, next) => {
       });
     } else {
       try {
-        const { title, description, body, author, tags, timestamp } = req.body;
+        const { title, description, body, tags, timestamp } = req.body;
         function calculateReadingTime(text) {
           const wordsPerMinute = 200;
           const wordCount = text.split(/\s+/).length;
@@ -43,6 +43,13 @@ exports.addBlog = async (req, res, next) => {
           }
         }
 
+        const author = {
+          id: authData.user._id,
+          username: authData.user.username,
+          name: `${authData.user.last_name} ${authData.user.first_name}`,
+          email: authData.user.email,
+        };
+
         const newBlog = new Blog({
           title,
           description,
@@ -52,13 +59,13 @@ exports.addBlog = async (req, res, next) => {
           state: false,
           read_count: 0,
           reading_time: readingTimeMinutes(body),
+          author,
           timestamp,
         });
         const blog = await newBlog.save();
         return res.status(201).json({
           success: true,
           data: blog,
-          authData,
         });
       } catch (err) {
         if (err.name === "ValidationError") {
