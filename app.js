@@ -15,9 +15,6 @@ require("./config/passport")(passport);
 
 connectDB();
 
-const blogs = require("./routes/blogs");
-const users = require("./routes/users");
-
 const app = express();
 
 app.use(express.json());
@@ -34,6 +31,15 @@ app.use(
 // Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+const blogs = require("./routes/blogs");
+const users = require("./routes/users");
+
+// Global Vars
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));

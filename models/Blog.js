@@ -13,10 +13,6 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please enter blog contents or body"],
   },
-  author: {
-    type: String,
-    required: [true, "Please enter blog author"],
-  },
   tags: {
     type: String,
     required: [true, "Please add tag(s)"],
@@ -32,6 +28,15 @@ const blogSchema = new mongoose.Schema({
   reading_time: {
     type: String,
     required: true,
+  },
+  author: {
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    username: String,
+    name: String,
+    email: String,
   },
   timestamp: {
     type: Date,
