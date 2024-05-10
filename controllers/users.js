@@ -87,20 +87,6 @@ exports.loginUser = async (req, res, next) => {
   })(req, res, next);
 };
 
-// exports.loginUser = async (req, res, next) => {
-//   passport.authenticate("local", (err, user, info) => {
-//     if (err) {
-//       return res.status(500).json({
-//         success: false,
-//         error: err.message,
-//       });
-//     }
-//     if (!user) {
-//       return res.status(401).json({
-//         success: false,
-//         message: info.message,
-//       });
-//     }
-//     next();
-//   })(req, res, next);
-// };
+exports.logoutUser = async (req, res, next) => {
+  req.logout();
+};

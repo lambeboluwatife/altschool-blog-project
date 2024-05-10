@@ -3,17 +3,33 @@ const jwt = require("jsonwebtoken");
 
 exports.getBlogs = async (req, res, next) => {
   try {
-    const blogs = await Blog.find();
+    const blogs = await Blog.find({ state: true });
 
     return res.status(200).json({
       success: true,
       count: blogs.length,
-      data: blogs,
+      data: blogs.length === 0 ? "No Blogs" : blogs,
     });
   } catch (err) {
     return res.status(500).json({
       success: false,
       error: "Server Error",
+    });
+  }
+};
+
+exports.getBlog = async (req, res, next) => {
+  try {
+    const blog = await Blog.findById(req.params.id).where("state").equals(true);
+
+    return res.status(200).json({
+      success: true,
+      data: blog === null ? "No Blog with that ID found" : blog,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.message,
     });
   }
 };

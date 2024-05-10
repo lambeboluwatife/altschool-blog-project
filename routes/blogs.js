@@ -2,10 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 const { verifyToken } = require("../middlewares/jwt");
-const { ensureAuthenticated } = require("../middlewares/authMiddleware");
+const {
+  ensureAuthenticated,
+  checkBlogOwnership,
+} = require("../middlewares/authMiddleware");
 
 const {
   getBlogs,
+  getBlog,
   addBlog,
   deleteBlog,
   updateBlog,
@@ -13,7 +17,11 @@ const {
 } = require("../controllers/blogs");
 
 router.route("/").get(getBlogs).post(verifyToken, addBlog);
-router.route("/:id").delete(deleteBlog).put(ensureAuthenticated, updateBlog);
-router.route("/:id/state").put(changeBlogState);
+router.route("/:id").get(getBlog);
+router
+  .route("/:id")
+  .delete(checkBlogOwnership, deleteBlog)
+  .put(checkBlogOwnership, updateBlog);
+router.route("/:id/state").put(checkBlogOwnership, changeBlogState);
 
 module.exports = router;
