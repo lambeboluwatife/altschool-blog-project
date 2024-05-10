@@ -34,6 +34,7 @@ app.use(passport.session());
 
 const blogs = require("./routes/blogs");
 const users = require("./routes/users");
+const author = require("./routes/author");
 
 // Global Vars
 app.use((req, res, next) => {
@@ -47,6 +48,7 @@ if (process.env.NODE_ENV === "development") {
 
 app.use("/blogs", blogs);
 app.use("/users", users);
+app.use("/author", author);
 
 app.all("*", (req, res) => {
   res.status(404).send("404 - route not found");
