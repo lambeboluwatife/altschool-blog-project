@@ -20,12 +20,22 @@ exports.getBlogs = async (req, res, next) => {
 
 exports.getBlog = async (req, res, next) => {
   try {
-    const blog = await Blog.findById(req.params.id).where("state").equals(true);
+    let blog = await Blog.findById(req.params.id).where("state").equals(true);
 
-    return res.status(200).json({
-      success: true,
-      data: blog === null ? "No Blog with that ID found" : blog,
-    });
+    if (blog === null) {
+      return res.status(200).json({
+        success: true,
+        data: "No Blog with that ID found",
+      });
+    } else {
+      blog.read_count = blog.read_count + 1;
+      blog = await blog.save();
+
+      return res.status(200).json({
+        success: true,
+        data: blog,
+      });
+    }
   } catch (err) {
     return res.status(500).json({
       success: false,
