@@ -11,6 +11,7 @@ const {
   getBlogs,
   getBlog,
   addBlog,
+  getOwnerBlogs,
   deleteBlog,
   updateBlog,
   changeBlogState,
