@@ -1,7 +1,12 @@
 const Blog = require("../models/Blog");
 const jwt = require("jsonwebtoken");
+const logger = require("../middlewares/logger");
 
 exports.getBlogs = async (req, res, next) => {
+  logger.info("Get all Blogs function called");
+
+  logger.info("Starting process...");
+
   try {
     const blogs = await Blog.find({ state: true });
 
@@ -15,6 +20,7 @@ exports.getBlogs = async (req, res, next) => {
       success: false,
       error: "Server Error",
     });
+    logger.info("Process completed");
   }
 };
 
